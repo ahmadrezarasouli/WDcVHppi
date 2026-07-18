@@ -1,1 +1,74 @@
+import tensorflow as tf
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Input
+from tensorflow.keras.models import Model
+from tensorflow.keras.callbacks import EarlyStopping
 
+
+def build_model(input_dim):
+
+    inputs = Input(shape=(input_dim,))
+
+    x = Dense(256, activation="relu")(inputs)
+    x = Dropout(0.2)(x)
+
+    x = Dense(128, activation="relu")(x)
+    x = Dropout(0.2)(x)
+
+    x = Dense(128, activation="relu")(x)
+    x = Dropout(0.2)(x)
+
+    x = Dense(64, activation="relu")(x)
+    x = Dropout(0.2)(x)
+
+    x = Dense(32, activation="relu")(x)
+    x = Dropout(0.2)(x)
+
+    outputs = Dense(1, activation="sigmoid")(x)
+
+    model = Model(inputs, outputs)
+
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+        loss="binary_crossentropy",
+        metrics=["accuracy"],
+    )
+
+    return model
+
+
+def train_model(
+    model,
+    X_train,
+    y_train,
+    epochs=100,
+    batch_size=32,
+):
+
+    early_stop = EarlyStopping(
+        monitor="val_loss",
+        patience=20,
+        restore_best_weights=True,
+    )
+
+    history = model.fit(
+        X_train,
+        y_train,
+        epochs=epochs,
+        batch_size=batch_size,
+        validation_split=0.2,
+        callbacks=[early_stop],
+        verbose=1,
+    )
+
+    return history
+
+
+def predict(model, X):
+
+    probabilities = model.predict(X).flatten()
+
+    predictions = (probabilities >= 0.5).astype(int)
+
+    return predictions, probabilities
