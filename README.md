@@ -31,9 +31,13 @@ WDcVHPPI was evaluated across multiple viral groups, including SARS-CoV, Influen
 The results demonstrate competitive and consistent predictive performance across diverse viral groups.
 
 Installation
+
 git clone https://github.com/YOUR_USERNAME/WDcVHPPI.git
+
 cd WDcVHPPI
+
 pip install -r requirements.txt
+
 Applications
 Virus–host PPI prediction
 Host protein prioritization
